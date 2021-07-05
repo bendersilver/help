@@ -3,11 +3,13 @@ package gob
 import (
 	gb "encoding/gob"
 	"os"
+	"strings"
 )
 
 // Dumps -
-func Dumps(fileName string, e interface{}) error {
-	fl, err := os.OpenFile(fileName, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0644)
+func Dumps(fileSuffix string, e interface{}) error {
+	f, _ := os.Executable()
+	fl, err := os.OpenFile(strings.Join([]string{f, fileSuffix, "gob"}, "."), os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0644)
 	if err != nil {
 		return err
 	}
@@ -16,8 +18,9 @@ func Dumps(fileName string, e interface{}) error {
 }
 
 // Loads -
-func Loads(fileName string, e interface{}) error {
-	fl, err := os.OpenFile(fileName, os.O_RDONLY, 0644)
+func Loads(fileSuffix string, e interface{}) error {
+	f, _ := os.Executable()
+	fl, err := os.OpenFile(strings.Join([]string{f, fileSuffix, "gob"}, "."), os.O_RDONLY, 0644)
 	if err != nil {
 		return err
 	}
