@@ -1,8 +1,6 @@
 package sync
 
-import (
-	satomic "sync/atomic"
-)
+import "sync/atomic"
 
 // Once -
 type Once struct {
@@ -11,7 +9,7 @@ type Once struct {
 
 // Do -
 func (o *Once) Do(f func()) {
-	if satomic.AddUint32(&o.done, 1) == 1 {
+	if atomic.AddUint32(&o.done, 1) == 1 {
 		f()
 	}
 }
@@ -23,9 +21,9 @@ type OnceQueue struct {
 
 // Do -
 func (o *OnceQueue) Do(f func()) {
-	if satomic.AddUint32(&o.done, 1) == 1 {
+	if atomic.AddUint32(&o.done, 1) == 1 {
 		f()
-		if satomic.SwapUint32(&o.done, 0) > 1 {
+		if atomic.SwapUint32(&o.done, 0) > 1 {
 			go o.Do(f)
 		}
 	}
