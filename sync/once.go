@@ -1,6 +1,9 @@
 package sync
 
-import "sync/atomic"
+import (
+	"log"
+	"sync/atomic"
+)
 
 // Once -
 type Once struct {
@@ -21,6 +24,7 @@ type OnceQueue struct {
 
 // Do -
 func (o *OnceQueue) Do(f func()) {
+	log.Println(atomic.LoadUint32(&o.done))
 	if atomic.AddUint32(&o.done, 1) == 1 {
 		f()
 		if atomic.SwapUint32(&o.done, 0) > 1 {
