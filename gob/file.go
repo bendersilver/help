@@ -2,28 +2,25 @@ package gob
 
 import (
 	gb "encoding/gob"
+	"fmt"
 	"os"
 	"path"
-	"strings"
 )
 
 func getName(suffix string) string {
-	var name string
 	f, _ := os.Executable()
+	var name string = fmt.Sprintf("%s.%s.gob", path.Base(f), suffix)
 	if v, ok := os.LookupEnv("GOB_DIR"); ok {
 		if _, err := os.Stat(v); os.IsNotExist(err) {
 			os.Mkdir(v, os.ModePerm)
 		}
-		name = path.Join(v, strings.Join([]string{path.Base(f), suffix, "gob"}, "."))
-	} else {
-		name = strings.Join([]string{f, suffix, "gob"}, ".")
+		return path.Join(v, name)
 	}
-	return name
+	return path.Join(path.Dir(f), name)
 }
 
 // Dumps -
 func Dumps(fileSuffix string, e interface{}) error {
-
 	fl, err := os.OpenFile(getName(fileSuffix), os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0644)
 	if err != nil {
 		return err
